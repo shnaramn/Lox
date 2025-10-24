@@ -50,7 +50,7 @@ namespace Shnaramn.Lox
                 {
                     var typeName = type.Split(":")[0].Trim();
                     output.AppendLine(prefix() + "R Visit" + typeName + baseName + "(" +
-                        typeName + " " + baseName + ");");
+                        typeName + " " + baseName.ToLower() + ");");
                 }
 
                 closeBrace();

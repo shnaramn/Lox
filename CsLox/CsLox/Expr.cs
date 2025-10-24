@@ -4,10 +4,10 @@ namespace Shnaramn.Lox
     {
         public interface Visitor<R>
         {
-            R VisitBinaryExpr(Binary Expr);
-            R VisitGroupingExpr(Grouping Expr);
-            R VisitLiteralExpr(Literal Expr);
-            R VisitUnaryExpr(Unary Expr);
+            R VisitBinaryExpr(Binary expr);
+            R VisitGroupingExpr(Grouping expr);
+            R VisitLiteralExpr(Literal expr);
+            R VisitUnaryExpr(Unary expr);
         }
 
         public abstract R Accept<R>(Visitor<R> visitor);
