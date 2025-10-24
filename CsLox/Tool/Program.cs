@@ -7,6 +7,7 @@ namespace Shnaramn.Lox
     {
         public static void Main(string[] args)
         {
+            var outputDir = @"/Users/shnara/Code/Lox/CsLox/CsLox";
             DefineAst(
                 outputDir, "Expr",
                 new string[]
@@ -40,9 +41,29 @@ namespace Shnaramn.Lox
                 output.AppendLine(prefix() + "}");
             };
 
+            var defineVisitor = (string baseName, IEnumerable<string> types) =>
+            {
+                output.AppendLine(prefix() + "public interface Visitor<R>");
+                openBrace();
+
+                foreach (var type in types)
+                {
+                    var typeName = type.Split(":")[0].Trim();
+                    output.AppendLine(prefix() + "R Visit" + typeName + baseName + "(" +
+                        typeName + " " + baseName + ");");
+                }
+
+                closeBrace();
+                output.AppendLine();
+
+                 // The base Accept() method.
+                output.AppendLine(prefix() + "public abstract R Accept<R>(Visitor<R> visitor);");
+                output.AppendLine();
+            };
+
             var defineType = (string className, string fieldList) =>
             {
-                output.AppendLine(prefix() + "class " + className + " : " + baseName);
+                output.AppendLine(prefix() + "public class " + className + " : " + baseName);
                 openBrace();
 
                 // Constructor.
@@ -59,6 +80,12 @@ namespace Shnaramn.Lox
 
                 closeBrace();
 
+                // Visitor pattern.
+                output.AppendLine();
+                output.AppendLine(prefix() + "override public R Accept<R>(Visitor<R> visitor) =>");
+                output.AppendLine(prefix() + "    visitor.Visit" + className + baseName + "(this);");
+
+
                 // Fields.
                 output.AppendLine();
                 foreach (string field in fields)
@@ -73,9 +100,10 @@ namespace Shnaramn.Lox
             output.AppendLine("namespace Shnaramn.Lox");
             openBrace(); // Namespace
 
-            output.AppendLine(prefix() + "abstract class " + baseName);
+            output.AppendLine(prefix() + "public abstract class " + baseName);
             openBrace(); // Class
 
+            defineVisitor(baseName, types);
 
             // The AST classes.
             foreach (var type in types)
