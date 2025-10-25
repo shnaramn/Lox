@@ -15,7 +15,7 @@ namespace Shnaramn.Lox
             _text = text;
         }
 
-        public IEnumerable<Token> GetTokens()
+        public IList<Token> GetTokens()
         {
             while (!IsEndOfText())
             {

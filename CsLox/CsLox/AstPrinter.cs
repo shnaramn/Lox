@@ -4,6 +4,8 @@ namespace Shnaramn.Lox;
 
 public class AstPrinter : Expr.Visitor<string>
 {
+    public string Print(Expr expr) => expr.Accept(this);
+
     public string VisitBinaryExpr(Expr.Binary expr) =>
         Parenthesize(expr.Operator.Lexeme, new Expr[] { expr.Left, expr.Right });
 

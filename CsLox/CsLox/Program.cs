@@ -35,6 +35,18 @@ namespace Shnaramn.Lox
             _hadError = true;
         }
 
+        internal static void Error(Token token, string message)
+        {
+            if (token.Type == TokenType.EOF)
+            {
+                Report(token.Line, " at end", message);
+            }
+            else
+            {
+                Report(token.Line, " at '" + token.Lexeme + "'", message);
+            }
+        }
+
         private static int RunFile(string filePath)
         {
             Run(File.ReadAllText(filePath));
@@ -63,11 +75,13 @@ namespace Shnaramn.Lox
         {
             var scanner = new Scanner(inputText);
             var tokens = scanner.GetTokens();
+            var parser = new Parser(tokens);
+            var expr = parser.Parse();
 
-            foreach (var token in tokens)
-            {
-                Console.WriteLine(token.ToString());
-            }
+            // Stop if there was a syntax error.
+            if (_hadError) return;
+
+            Console.WriteLine(new AstPrinter().Print(expr));
         }
     }
 }
