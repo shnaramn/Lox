@@ -2,7 +2,7 @@ namespace Shnaramn.Lox
 {
     public abstract class Expr
     {
-        public interface Visitor<R>
+        public interface IVisitor<R>
         {
             R VisitBinaryExpr(Binary expr);
             R VisitGroupingExpr(Grouping expr);
@@ -10,7 +10,7 @@ namespace Shnaramn.Lox
             R VisitUnaryExpr(Unary expr);
         }
 
-        public abstract R Accept<R>(Visitor<R> visitor);
+        public abstract R Accept<R>(IVisitor<R> visitor);
 
         public class Binary : Expr
         {
@@ -21,7 +21,7 @@ namespace Shnaramn.Lox
                 this.Right = Right;
             }
 
-            override public R Accept<R>(Visitor<R> visitor) =>
+            override public R Accept<R>(IVisitor<R> visitor) =>
                 visitor.VisitBinaryExpr(this);
 
             public readonly Expr Left;
@@ -36,7 +36,7 @@ namespace Shnaramn.Lox
                 this.Expression = Expression;
             }
 
-            override public R Accept<R>(Visitor<R> visitor) =>
+            override public R Accept<R>(IVisitor<R> visitor) =>
                 visitor.VisitGroupingExpr(this);
 
             public readonly Expr Expression;
@@ -49,7 +49,7 @@ namespace Shnaramn.Lox
                 this.Value = Value;
             }
 
-            override public R Accept<R>(Visitor<R> visitor) =>
+            override public R Accept<R>(IVisitor<R> visitor) =>
                 visitor.VisitLiteralExpr(this);
 
             public readonly object Value;
@@ -63,7 +63,7 @@ namespace Shnaramn.Lox
                 this.Right = Right;
             }
 
-            override public R Accept<R>(Visitor<R> visitor) =>
+            override public R Accept<R>(IVisitor<R> visitor) =>
                 visitor.VisitUnaryExpr(this);
 
             public readonly Token Operator;

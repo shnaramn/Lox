@@ -43,7 +43,7 @@ namespace Shnaramn.Lox
 
             var defineVisitor = (string baseName, IEnumerable<string> types) =>
             {
-                output.AppendLine(prefix() + "public interface Visitor<R>");
+                output.AppendLine(prefix() + "public interface IVisitor<R>");
                 openBrace();
 
                 foreach (var type in types)
@@ -57,7 +57,7 @@ namespace Shnaramn.Lox
                 output.AppendLine();
 
                  // The base Accept() method.
-                output.AppendLine(prefix() + "public abstract R Accept<R>(Visitor<R> visitor);");
+                output.AppendLine(prefix() + "public abstract R Accept<R>(IVisitor<R> visitor);");
                 output.AppendLine();
             };
 
@@ -82,7 +82,7 @@ namespace Shnaramn.Lox
 
                 // Visitor pattern.
                 output.AppendLine();
-                output.AppendLine(prefix() + "override public R Accept<R>(Visitor<R> visitor) =>");
+                output.AppendLine(prefix() + "override public R Accept<R>(IVisitor<R> visitor) =>");
                 output.AppendLine(prefix() + "    visitor.Visit" + className + baseName + "(this);");
 
 

@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Shnaramn.Lox;
 
-public class AstPrinter : Expr.Visitor<string>
+public class AstPrinter : Expr.IVisitor<string>
 {
     public string Print(Expr expr) => expr.Accept(this);
 
