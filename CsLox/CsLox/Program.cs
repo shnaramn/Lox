@@ -3,7 +3,9 @@ namespace Shnaramn.Lox
 {
     internal class CsLox
     {
+        private static readonly Interpreter _interpreter = new Interpreter();
         private static bool _hadError = false;
+        private static bool _hadRuntimeError = false;
 
         public static int Main(string[] args)
         {
@@ -47,12 +49,21 @@ namespace Shnaramn.Lox
             }
         }
 
+        internal static void RuntimeError(RuntimeError error)
+        {
+            Console.WriteLine(error.Message + "\n[line " + error.Token.Line + "]");
+            _hadRuntimeError = true;
+        }
+
         private static int RunFile(string filePath)
         {
             Run(File.ReadAllText(filePath));
 
             // Indicate an error in the exit code.
-            return _hadError ? -1 : 0;
+            if (_hadError) return -1; // TODO: Fix.
+            if (_hadRuntimeError) return -1; // TODO: Fix.
+
+            return 0;
         }
 
         private static void RunPrompt()
@@ -81,7 +92,7 @@ namespace Shnaramn.Lox
             // Stop if there was a syntax error.
             if (_hadError) return;
 
-            Console.WriteLine(new AstPrinter().Print(expr));
+            _interpreter.Interpret(expr);
         }
     }
 }
