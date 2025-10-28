@@ -18,104 +18,104 @@ public class Parser
 
         while (!IsAtEnd())
         {
-            statements.Add(Statement());
+            statements.Add(ParseStatement());
         }
 
         return statements;
     }
 
-    private Stmt Statement()
+    private Stmt ParseStatement()
     {
-        if (Match(TokenType.PRINT)) return PrintStatement();
+        if (Match(TokenType.PRINT)) return ParsePrintStatement();
 
-        return ExpressionStatement();
+        return ParseExpressionStatement();
     }
 
-    private Stmt PrintStatement()
+    private Stmt ParsePrintStatement()
     {
-        Expr value = Expression();
+        Expr value = ParseExpression();
         Consume(TokenType.SEMICOLON, "Expect ';' after value.");
         return new Stmt.Print(value);
     }
 
-    private Stmt ExpressionStatement()
+    private Stmt ParseExpressionStatement()
     {
-        Expr value = Expression();
+        Expr value = ParseExpression();
         Consume(TokenType.SEMICOLON, "Expect ';' after value.");
         return new Stmt.Expression(value);
     }
 
-    private Expr Expression() => Equality();
+    private Expr ParseExpression() => ParseEquality();
 
-    private Expr Equality()
+    private Expr ParseEquality()
     {
-        var expr = Comparison();
+        var expr = ParseComparison();
 
         while (Match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL))
         {
             var @operator = Previous();
-            var right = Comparison();
+            var right = ParseComparison();
             expr = new Expr.Binary(expr, @operator, right);
         }
 
         return expr;
     }
 
-    private Expr Comparison()
+    private Expr ParseComparison()
     {
-        var expr = Term();
+        var expr = ParseTerm();
 
         while (Match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESSER, TokenType.LESSER_EQUAL))
         {
             var @operator = Previous();
-            var right = Term();
+            var right = ParseTerm();
             expr = new Expr.Binary(expr, @operator, right);
         }
 
         return expr;
     }
 
-    private Expr Term()
+    private Expr ParseTerm()
     {
-        var expr = Factor();
+        var expr = ParseFactor();
 
         while (Match(TokenType.MINUS, TokenType.PLUS))
         {
             var @operator = Previous();
-            var right = Factor();
+            var right = ParseFactor();
             expr = new Expr.Binary(expr, @operator, right);
         }
 
         return expr;
     }
 
-     private Expr Factor()
+     private Expr ParseFactor()
     {
-        var expr = Unary();
+        var expr = ParseUnary();
 
         while (Match(TokenType.SLASH, TokenType.STAR))
         {
             var @operator = Previous();
-            var right = Unary();
+            var right = ParseUnary();
             expr = new Expr.Binary(expr, @operator, right);
         }
 
         return expr;
     }
 
-    private Expr Unary()
+    private Expr ParseUnary()
     {
         if (Match(TokenType.MINUS, TokenType.BANG))
         {
             var @operator = Previous();
-            var right = Unary();
+            var right = ParseUnary();
             return new Expr.Unary(@operator, right);
         }
 
-        return Primary();
+        return ParsePrimary();
     }
 
-    private Expr Primary()
+    private Expr ParsePrimary()
     {
         if (Match(TokenType.FALSE)) return new Expr.Literal(false);
         if (Match(TokenType.TRUE)) return new Expr.Literal(true);
@@ -132,7 +132,7 @@ public class Parser
 
         if (Match(TokenType.PAREN_LEFT))
         {
-            Expr expr = Expression();
+            Expr expr = ParseExpression();
             Consume(TokenType.PAREN_RIGHT, "Expect ')' after expression.");
             return new Expr.Grouping(expr);
         }
