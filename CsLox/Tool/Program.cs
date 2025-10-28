@@ -17,6 +17,14 @@ namespace Shnaramn.Lox
                     "Literal  : object Value",
                     "Unary    : Token Operator, Expr Right"
                 });
+
+            DefineAst(
+                outputDir, "Stmt",
+                new string[]
+                {
+                    "Expression : Expr ExpressionStmt",
+                    "Print      : Expr ExpressionPrint"
+                });
         }
 
         private static void DefineAst(

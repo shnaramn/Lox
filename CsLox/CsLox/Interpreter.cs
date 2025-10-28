@@ -1,18 +1,25 @@
 
 namespace Shnaramn.Lox;
 
-public class Interpreter : Expr.IVisitor<object>
+public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 {
-    public void Interpret(Expr expression)
+    public void Interpret(List<Stmt> statements)
     {
         try
         {
-            object value = Evaluate(expression);
-            Console.WriteLine(Stringify(value));
+            foreach (var statement in statements)
+            {
+                Execute(statement);
+            }
         } catch (RuntimeError error)
         {
             CsLox.RuntimeError(error);
         }
+    }
+
+    public object Execute(Stmt statement)
+    {
+        return statement.Accept(this);
     }
 
     public object Evaluate(Expr expr)
@@ -140,5 +147,18 @@ public class Interpreter : Expr.IVisitor<object>
         }
 
         return obj.ToString();
+    }
+
+    public object VisitExpressionStmt(Stmt.Expression stmt)
+    {
+        Evaluate(stmt.ExpressionStmt);
+        return null;
+    }
+
+    public object VisitPrintStmt(Stmt.Print stmt)
+    {
+        var value = Evaluate(stmt.ExpressionPrint);
+        Console.WriteLine(Stringify(value));
+        return null;
     }
 }

@@ -87,12 +87,12 @@ namespace Shnaramn.Lox
             var scanner = new Scanner(inputText);
             var tokens = scanner.GetTokens();
             var parser = new Parser(tokens);
-            var expr = parser.Parse();
+            var statements = parser.Parse();
 
             // Stop if there was a syntax error.
             if (_hadError) return;
 
-            _interpreter.Interpret(expr);
+            _interpreter.Interpret(statements);
         }
     }
 }

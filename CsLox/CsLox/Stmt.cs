@@ -1,0 +1,39 @@
+namespace Shnaramn.Lox
+{
+    public abstract class Stmt
+    {
+        public interface IVisitor<R>
+        {
+            R VisitExpressionStmt(Expression stmt);
+            R VisitPrintStmt(Print stmt);
+        }
+
+        public abstract R Accept<R>(IVisitor<R> visitor);
+
+        public class Expression : Stmt
+        {
+            public Expression(Expr ExpressionStmt)
+            {
+                this.ExpressionStmt = ExpressionStmt;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitExpressionStmt(this);
+
+            public readonly Expr ExpressionStmt;
+        }
+
+        public class Print : Stmt
+        {
+            public Print(Expr ExpressionPrint)
+            {
+                this.ExpressionPrint = ExpressionPrint;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitPrintStmt(this);
+
+            public readonly Expr ExpressionPrint;
+        }
+    }
+}
