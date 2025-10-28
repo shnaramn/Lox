@@ -15,7 +15,8 @@ namespace Shnaramn.Lox
                     "Binary   : Expr Left, Token Operator, Expr Right",
                     "Grouping : Expr Expression",
                     "Literal  : object Value",
-                    "Unary    : Token Operator, Expr Right"
+                    "Unary    : Token Operator, Expr Right",
+                    "Var      : Token Name" // For accessing variables.
                 });
 
             DefineAst(
@@ -23,7 +24,8 @@ namespace Shnaramn.Lox
                 new string[]
                 {
                     "Expression : Expr ExpressionStmt",
-                    "Print      : Expr ExpressionPrint"
+                    "Print      : Expr ExpressionPrint",
+                    "Var        : Token Name, Expr Initializer" // For declaring variables.
                 });
         }
 

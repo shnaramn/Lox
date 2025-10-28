@@ -18,10 +18,40 @@ public class Parser
 
         while (!IsAtEnd())
         {
-            statements.Add(ParseStatement());
+            statements.Add(ParseDeclaration());
         }
 
         return statements;
+    }
+
+    private Stmt ParseDeclaration()
+    {
+        try
+        {
+            if (Match(TokenType.VAR))
+                return ParseVarDeclaration();
+
+            return ParseStatement();
+        }
+        catch (ParseError)
+        {
+            Synchronize();
+            return null;
+        }
+    }
+
+    private Stmt ParseVarDeclaration()
+    {
+        var name = Consume(TokenType.IDENTIFIER, "Expect variable name.");
+        Expr initializer = null;
+
+        if (Match(TokenType.EQUAL))
+        {
+            initializer = ParseExpression();
+        }
+
+        Consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+        return new Stmt.Var(name, initializer);
     }
 
     private Stmt ParseStatement()
@@ -128,6 +158,11 @@ public class Parser
 #pragma warning disable CS8604 // Possible null reference argument.
             return new Expr.Literal(Previous().Literal);
 #pragma warning restore CS8604 // Possible null reference argument.
+        }
+
+        if (Match(TokenType.IDENTIFIER))
+        {
+            return new Expr.Var(Previous());
         }
 
         if (Match(TokenType.PAREN_LEFT))

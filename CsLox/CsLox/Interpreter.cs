@@ -3,6 +3,8 @@ namespace Shnaramn.Lox;
 
 public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 {
+    private Environment environment = new Environment();
+
     public void Interpret(List<Stmt> statements)
     {
         try
@@ -159,6 +161,16 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
         var value = Evaluate(stmt.ExpressionPrint);
         Console.WriteLine(Stringify(value));
+        return null;
+    }
+
+    public object VisitVarExpr(Expr.Var expr) =>
+        environment.Get(expr.Name);
+
+    public object VisitVarStmt(Stmt.Var stmt)
+    {
+        var value = stmt.Initializer != null ? Evaluate(stmt.Initializer) : null;
+        environment.DefineVariable(stmt.Name.Lexeme, value);
         return null;
     }
 }

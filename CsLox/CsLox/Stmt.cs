@@ -6,6 +6,7 @@ namespace Shnaramn.Lox
         {
             R VisitExpressionStmt(Expression stmt);
             R VisitPrintStmt(Print stmt);
+            R VisitVarStmt(Var stmt);
         }
 
         public abstract R Accept<R>(IVisitor<R> visitor);
@@ -34,6 +35,21 @@ namespace Shnaramn.Lox
                 visitor.VisitPrintStmt(this);
 
             public readonly Expr ExpressionPrint;
+        }
+
+        public class Var : Stmt
+        {
+            public Var(Token Name, Expr Initializer)
+            {
+                this.Name = Name;
+                this.Initializer = Initializer;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitVarStmt(this);
+
+            public readonly Token Name;
+            public readonly Expr Initializer;
         }
     }
 }

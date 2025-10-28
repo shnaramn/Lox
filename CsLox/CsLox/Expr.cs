@@ -8,6 +8,7 @@ namespace Shnaramn.Lox
             R VisitGroupingExpr(Grouping expr);
             R VisitLiteralExpr(Literal expr);
             R VisitUnaryExpr(Unary expr);
+            R VisitVarExpr(Var expr);
         }
 
         public abstract R Accept<R>(IVisitor<R> visitor);
@@ -68,6 +69,19 @@ namespace Shnaramn.Lox
 
             public readonly Token Operator;
             public readonly Expr Right;
+        }
+
+        public class Var : Expr
+        {
+            public Var(Token Name)
+            {
+                this.Name = Name;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitVarExpr(this);
+
+            public readonly Token Name;
         }
     }
 }
