@@ -12,6 +12,7 @@ namespace Shnaramn.Lox
                 outputDir, "Expr",
                 new string[]
                 {
+                    "Assign   : Token Name, Expr Value",
                     "Binary   : Expr Left, Token Operator, Expr Right",
                     "Grouping : Expr Expression",
                     "Literal  : object Value",

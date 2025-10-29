@@ -173,4 +173,11 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         environment.DefineVariable(stmt.Name.Lexeme, value);
         return null;
     }
+
+    public object VisitAssignExpr(Expr.Assign expr)
+    {
+        var val = Evaluate(expr.Value);
+        environment.Assign(expr.Name, val);
+        return null;
+    }
 }

@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Shnaramn.Lox;
@@ -5,6 +6,9 @@ namespace Shnaramn.Lox;
 public class AstPrinter : Expr.IVisitor<string>
 {
     public string Print(Expr expr) => expr.Accept(this);
+
+    public string VisitAssignExpr(Expr.Assign expr) =>
+        Parenthesize(expr.Name.Lexeme, expr.Value);
 
     public string VisitBinaryExpr(Expr.Binary expr) =>
         Parenthesize(expr.Operator.Lexeme, expr.Left, expr.Right);

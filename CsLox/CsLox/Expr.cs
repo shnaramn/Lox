@@ -4,6 +4,7 @@ namespace Shnaramn.Lox
     {
         public interface IVisitor<R>
         {
+            R VisitAssignExpr(Assign expr);
             R VisitBinaryExpr(Binary expr);
             R VisitGroupingExpr(Grouping expr);
             R VisitLiteralExpr(Literal expr);
@@ -12,6 +13,21 @@ namespace Shnaramn.Lox
         }
 
         public abstract R Accept<R>(IVisitor<R> visitor);
+
+        public class Assign : Expr
+        {
+            public Assign(Token Name, Expr Value)
+            {
+                this.Name = Name;
+                this.Value = Value;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitAssignExpr(this);
+
+            public readonly Token Name;
+            public readonly Expr Value;
+        }
 
         public class Binary : Expr
         {
