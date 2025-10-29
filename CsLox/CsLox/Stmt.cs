@@ -4,12 +4,26 @@ namespace Shnaramn.Lox
     {
         public interface IVisitor<R>
         {
+            R VisitBlockStmt(Block stmt);
             R VisitExpressionStmt(Expression stmt);
             R VisitPrintStmt(Print stmt);
             R VisitVarStmt(Var stmt);
         }
 
         public abstract R Accept<R>(IVisitor<R> visitor);
+
+        public class Block : Stmt
+        {
+            public Block(List<Stmt> Statements)
+            {
+                this.Statements = Statements;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitBlockStmt(this);
+
+            public readonly List<Stmt> Statements;
+        }
 
         public class Expression : Stmt
         {

@@ -24,6 +24,7 @@ namespace Shnaramn.Lox
                 outputDir, "Stmt",
                 new string[]
                 {
+                    "Block      : List<Stmt> Statements",
                     "Expression : Expr ExpressionStmt",
                     "Print      : Expr ExpressionPrint",
                     "Var        : Token Name, Expr Initializer" // For declaring variables.

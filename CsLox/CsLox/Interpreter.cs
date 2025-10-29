@@ -180,4 +180,28 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         environment.Assign(expr.Name, val);
         return null;
     }
+
+    public object VisitBlockStmt(Stmt.Block stmt)
+    {
+        ExecuteBlock(stmt.Statements, new Environment(this.environment));
+        return null;
+    }
+
+    public void ExecuteBlock(List<Stmt> statements, Environment environment)
+    {
+        Environment previous = this.environment;
+        try
+        {
+            this.environment = environment;
+
+            foreach (Stmt statement in statements)
+            {
+                Execute(statement);
+            }
+        }
+        finally
+        {
+            this.environment = previous;
+        }
+    }
 }
