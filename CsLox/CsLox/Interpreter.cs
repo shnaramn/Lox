@@ -204,4 +204,20 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
             this.environment = previous;
         }
     }
+
+    public object VisitIfStmt(Stmt.If stmt)
+    {
+        var value = Evaluate(stmt.Condition);
+
+        if (IsTruthy(value))
+        {
+            Execute(stmt.ThenBranch);
+        }
+        else if (stmt.ElseBranch != null)
+        {
+            Execute(stmt.ElseBranch);
+        }
+
+        return null;
+    }
 }

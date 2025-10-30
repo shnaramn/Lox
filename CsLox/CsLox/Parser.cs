@@ -56,9 +56,28 @@ public class Parser
 
     private Stmt ParseStatement()
     {
+        if (Match(TokenType.IF)) return ParseIfStatement();
         if (Match(TokenType.PRINT)) return ParsePrintStatement();
         if (Match(TokenType.BRACE_LEFT)) return ParseBlockStatement();
         return ParseExpressionStatement();
+    }
+
+    private Stmt ParseIfStatement()
+    {
+        Consume(TokenType.PAREN_LEFT, "Expect '(' after keyword 'if'.");
+        var condition = ParseExpression();
+        Consume(TokenType.PAREN_RIGHT, "Expect ')' after condition.");
+
+        var thenBranch = ParseStatement();
+
+        Stmt elseBranch = null;
+
+        if (Match(TokenType.ELSE))
+        {
+            elseBranch = ParseStatement();
+        }
+
+        return new Stmt.If(condition, thenBranch, elseBranch);
     }
 
     private Stmt ParsePrintStatement()

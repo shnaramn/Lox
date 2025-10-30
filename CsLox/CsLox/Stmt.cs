@@ -6,6 +6,7 @@ namespace Shnaramn.Lox
         {
             R VisitBlockStmt(Block stmt);
             R VisitExpressionStmt(Expression stmt);
+            R VisitIfStmt(If stmt);
             R VisitPrintStmt(Print stmt);
             R VisitVarStmt(Var stmt);
         }
@@ -36,6 +37,23 @@ namespace Shnaramn.Lox
                 visitor.VisitExpressionStmt(this);
 
             public readonly Expr ExpressionStmt;
+        }
+
+        public class If : Stmt
+        {
+            public If(Expr Condition, Stmt ThenBranch, Stmt ElseBranch)
+            {
+                this.Condition = Condition;
+                this.ThenBranch = ThenBranch;
+                this.ElseBranch = ElseBranch;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitIfStmt(this);
+
+            public readonly Expr Condition;
+            public readonly Stmt ThenBranch;
+            public readonly Stmt ElseBranch;
         }
 
         public class Print : Stmt
