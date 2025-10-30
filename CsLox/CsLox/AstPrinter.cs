@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Shnaramn.Lox;
@@ -26,6 +25,9 @@ public class AstPrinter : Expr.IVisitor<string>
 
     public string VisitVarExpr(Expr.Var expr) =>
         Parenthesize(expr.Name.Lexeme);
+
+    public string VisitLogicalExpr(Expr.Logical expr) =>
+        Parenthesize(expr.Operator.Lexeme, expr.Left, expr.Right);
 
     private string Parenthesize(string name, params Expr[] exprs)
     {

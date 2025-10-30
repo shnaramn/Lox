@@ -220,4 +220,21 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
         return null;
     }
+
+    public object VisitLogicalExpr(Expr.Logical expr)
+    {
+        var left = Evaluate(expr.Left);
+
+        // Short cirtuit?
+        if (expr.Operator.Type == TokenType.OR)
+        {
+            if (IsTruthy(left)) return left;
+        }
+        else // And Operation
+        {
+            if (!IsTruthy(left)) return left;
+        }
+
+        return Evaluate(expr.Right);
+    }
 }

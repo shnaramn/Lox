@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace Shnaramn.Lox;
 
 public class Parser
@@ -111,7 +113,7 @@ public class Parser
 
     private Expr ParseAssignment()
     {
-        var expr = ParseEquality();
+        var expr = ParseOrExpression();
 
         if (Match(TokenType.EQUAL))
         {
@@ -126,8 +128,36 @@ public class Parser
             Error(equals, "Invalid assignment target.");
         }
 
-    return expr;
-  }
+        return expr;
+    }
+
+    private Expr ParseOrExpression()
+    {
+        var expr = ParseAndExpression();
+
+        while (Match(TokenType.OR))
+        {
+            var @operator = Previous();
+            var right = ParseAndExpression();
+            expr = new Expr.Logical(expr, @operator, right);
+        }
+
+        return expr;
+    }
+
+    private Expr ParseAndExpression()
+    {
+        var expr = ParseEquality();
+
+        while (Match(TokenType.AND))
+        {
+            var @operator = Previous();
+            var right = ParseEquality();
+            expr = new Expr.Logical(expr, @operator, right);
+        }
+
+        return expr;
+    }
 
     private Expr ParseEquality()
     {

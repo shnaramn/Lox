@@ -8,6 +8,7 @@ namespace Shnaramn.Lox
             R VisitBinaryExpr(Binary expr);
             R VisitGroupingExpr(Grouping expr);
             R VisitLiteralExpr(Literal expr);
+            R VisitLogicalExpr(Logical expr);
             R VisitUnaryExpr(Unary expr);
             R VisitVarExpr(Var expr);
         }
@@ -70,6 +71,23 @@ namespace Shnaramn.Lox
                 visitor.VisitLiteralExpr(this);
 
             public readonly object Value;
+        }
+
+        public class Logical : Expr
+        {
+            public Logical(Expr Left, Token Operator, Expr Right)
+            {
+                this.Left = Left;
+                this.Operator = Operator;
+                this.Right = Right;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitLogicalExpr(this);
+
+            public readonly Expr Left;
+            public readonly Token Operator;
+            public readonly Expr Right;
         }
 
         public class Unary : Expr
