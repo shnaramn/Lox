@@ -237,4 +237,14 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
         return Evaluate(expr.Right);
     }
+
+    public object VisitWhileStmt(Stmt.While stmt)
+    {
+        while (IsTruthy(Evaluate(stmt.Condition)))
+        {
+            Execute(stmt.Body);
+        }
+
+        return true;
+    }
 }

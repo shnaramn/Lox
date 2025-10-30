@@ -61,6 +61,7 @@ public class Parser
         if (Match(TokenType.IF)) return ParseIfStatement();
         if (Match(TokenType.PRINT)) return ParsePrintStatement();
         if (Match(TokenType.BRACE_LEFT)) return ParseBlockStatement();
+        if (Match(TokenType.WHILE)) return ParseWhileStatement();
         return ParseExpressionStatement();
     }
 
@@ -102,6 +103,15 @@ public class Parser
         return new Stmt.Block(statements);
     }
 
+    private Stmt ParseWhileStatement()
+    {
+        Consume(TokenType.PAREN_LEFT, "Expect '( after 'while'.");
+        var condition = ParseExpression();
+        Consume(TokenType.PAREN_RIGHT, "Expect ')' after condition.");
+        var body = ParseStatement();
+
+        return new Stmt.While(condition, body);
+    }
     private Stmt ParseExpressionStatement()
     {
         Expr value = ParseExpression();

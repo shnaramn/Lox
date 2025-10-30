@@ -9,6 +9,7 @@ namespace Shnaramn.Lox
             R VisitIfStmt(If stmt);
             R VisitPrintStmt(Print stmt);
             R VisitVarStmt(Var stmt);
+            R VisitWhileStmt(While stmt);
         }
 
         public abstract R Accept<R>(IVisitor<R> visitor);
@@ -82,6 +83,21 @@ namespace Shnaramn.Lox
 
             public readonly Token Name;
             public readonly Expr Initializer;
+        }
+
+        public class While : Stmt
+        {
+            public While(Expr Condition, Stmt Body)
+            {
+                this.Condition = Condition;
+                this.Body = Body;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitWhileStmt(this);
+
+            public readonly Expr Condition;
+            public readonly Stmt Body;
         }
     }
 }

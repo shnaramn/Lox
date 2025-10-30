@@ -29,7 +29,8 @@ namespace Shnaramn.Lox
                     "Expression : Expr ExpressionStmt",
                     "If         : Expr Condition, Stmt ThenBranch, Stmt ElseBranch",
                     "Print      : Expr ExpressionPrint",
-                    "Var        : Token Name, Expr Initializer" // For declaring variables.
+                    "Var        : Token Name, Expr Initializer", // For declaring variables.
+                    "While      : Expr Condition, Stmt Body"
                 });
         }
 
