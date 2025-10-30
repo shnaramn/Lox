@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 
 namespace Shnaramn.Lox;
 
@@ -58,11 +57,72 @@ public class Parser
 
     private Stmt ParseStatement()
     {
+        if (Match(TokenType.FOR)) return ParseForStatement();
         if (Match(TokenType.IF)) return ParseIfStatement();
         if (Match(TokenType.PRINT)) return ParsePrintStatement();
         if (Match(TokenType.BRACE_LEFT)) return ParseBlockStatement();
         if (Match(TokenType.WHILE)) return ParseWhileStatement();
         return ParseExpressionStatement();
+    }
+
+    private Stmt ParseForStatement()
+    {
+        Consume(TokenType.PAREN_LEFT, "Expect '(' after keyword 'for'.");
+
+        Stmt initializer;
+        if (Match(TokenType.SEMICOLON))
+        {
+            initializer = null;
+        }
+        else if (Match(TokenType.VAR))
+        {
+            initializer = ParseVarDeclaration();
+        }
+        else
+        {
+            initializer = ParseExpressionStatement();
+        }
+
+        Expr condition = null;
+        if (!Check(TokenType.SEMICOLON))
+        {
+            condition = ParseExpression();
+        }
+        Consume(TokenType.SEMICOLON, "Expect ';' after condition.");
+
+        Expr incrementor = null;
+        if (!Check(TokenType.PAREN_RIGHT))
+        {
+            incrementor = ParseExpression();
+        }
+        Consume(TokenType.PAREN_RIGHT, "Expect ')' after for clauses.");
+
+        var body = ParseStatement();
+
+        if (incrementor != null)
+        {
+            body = new Stmt.Block(
+                new List<Stmt>()
+                {
+                    body,
+                    new Stmt.Expression(incrementor)
+                });
+        }
+
+        if (condition == null) condition = new Expr.Literal(true);
+        body = new Stmt.While(condition, body);
+
+        if (initializer != null)
+        {
+            body = new Stmt.Block(
+                new List<Stmt>()
+                {
+                    initializer,
+                    body
+                });
+        }
+
+        return body;
     }
 
     private Stmt ParseIfStatement()
