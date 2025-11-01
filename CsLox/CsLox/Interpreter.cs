@@ -96,7 +96,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         switch (expr.Operator.Type)
         {
             case TokenType.BANG:
-                return !IsTruthy(right);
+                return !IsTrue(right);
 
             case TokenType.MINUS:
                 CheckNumberOperand(expr.Operator, right);
@@ -119,7 +119,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         throw new RuntimeError(@operator, "Operand must be a number.");
     }
 
-    private static bool IsTruthy(object val)
+    private static bool IsTrue(object val)
     {
         if (val is null) return false;
         if (val is bool) return (bool)val;
@@ -209,7 +209,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
         var value = Evaluate(stmt.Condition);
 
-        if (IsTruthy(value))
+        if (IsTrue(value))
         {
             Execute(stmt.ThenBranch);
         }
@@ -228,11 +228,11 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         // Short cirtuit?
         if (expr.Operator.Type == TokenType.OR)
         {
-            if (IsTruthy(left)) return left;
+            if (IsTrue(left)) return left;
         }
         else // And Operation
         {
-            if (!IsTruthy(left)) return left;
+            if (!IsTrue(left)) return left;
         }
 
         return Evaluate(expr.Right);
@@ -240,7 +240,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
     public object VisitWhileStmt(Stmt.While stmt)
     {
-        while (IsTruthy(Evaluate(stmt.Condition)))
+        while (IsTrue(Evaluate(stmt.Condition)))
         {
             Execute(stmt.Body);
         }
