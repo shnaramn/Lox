@@ -1,4 +1,6 @@
 
+using System.Reflection;
+
 namespace Shnaramn.Lox;
 
 public class Parser
@@ -29,8 +31,8 @@ public class Parser
     {
         try
         {
-            if (Match(TokenType.VAR))
-                return ParseVarDeclaration();
+            if (Match(TokenType.FUN)) return ParseFunction("function");
+            if (Match(TokenType.VAR)) return ParseVarDeclaration();
 
             return ParseStatement();
         }
@@ -39,6 +41,34 @@ public class Parser
             Synchronize();
             return null;
         }
+    }
+
+    private Stmt ParseFunction(string kind)
+    {
+        var name = Consume(TokenType.IDENTIFIER, $"Expect {kind} name.");
+        Consume(TokenType.PAREN_LEFT, $"Expect '(' after {kind} name.");
+
+        List<Token> parameters = new List<Token>();
+
+        if (!Check(TokenType.PAREN_RIGHT))
+        {
+            do
+            {
+                if (parameters.Count >= 255)
+                {
+                    Error(Peek(), "Can't have more than 255 parameters.");
+                }
+
+                parameters.Add(
+                    Consume(TokenType.IDENTIFIER, "Expect parameter name."));
+            } while (Match(TokenType.COMMA));
+        }
+
+        Consume(TokenType.PAREN_RIGHT, "Expect ')' after parameters.");
+        Consume(TokenType.BRACE_LEFT, $"Expect '{{' before ${kind} body.");
+        List<Stmt> body = ParseBlockStatement();
+
+        return new Stmt.Function(name, parameters, body);
     }
 
     private Stmt ParseVarDeclaration()
@@ -60,7 +90,7 @@ public class Parser
         if (Match(TokenType.FOR)) return ParseForStatement();
         if (Match(TokenType.IF)) return ParseIfStatement();
         if (Match(TokenType.PRINT)) return ParsePrintStatement();
-        if (Match(TokenType.BRACE_LEFT)) return ParseBlockStatement();
+        if (Match(TokenType.BRACE_LEFT)) return new Stmt.Block(ParseBlockStatement());
         if (Match(TokenType.WHILE)) return ParseWhileStatement();
         return ParseExpressionStatement();
     }
@@ -150,7 +180,7 @@ public class Parser
         return new Stmt.Print(value);
     }
 
-    private Stmt ParseBlockStatement()
+    private List<Stmt> ParseBlockStatement()
     {
         List<Stmt> statements = new List<Stmt>();
         while (!Check(TokenType.BRACE_RIGHT) && !IsAtEnd())
@@ -160,7 +190,7 @@ public class Parser
 
         Consume(TokenType.BRACE_RIGHT, "Expect '}' after block.");
 
-        return new Stmt.Block(statements);
+        return statements;
     }
 
     private Stmt ParseWhileStatement()

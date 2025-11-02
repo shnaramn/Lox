@@ -3,13 +3,13 @@ namespace Shnaramn.Lox;
 
 public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 {
-    private readonly Environment globals = new Environment();
-    private Environment environment;
+    public readonly Environment Globals = new Environment();
+    public Environment Environment { get; set; }
 
     public Interpreter()
     {
-        globals.DefineVariable("clock", new Clock());
-        environment = globals;
+        Globals.DefineVariable("clock", new Clock());
+        Environment = Globals;
     }
 
     public void Interpret(List<Stmt> statements)
@@ -173,34 +173,34 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     }
 
     public object VisitVarExpr(Expr.Var expr) =>
-        environment.Get(expr.Name);
+        Environment.Get(expr.Name);
 
     public object VisitVarStmt(Stmt.Var stmt)
     {
         var value = stmt.Initializer != null ? Evaluate(stmt.Initializer) : null;
-        environment.DefineVariable(stmt.Name.Lexeme, value);
+        Environment.DefineVariable(stmt.Name.Lexeme, value);
         return null;
     }
 
     public object VisitAssignExpr(Expr.Assign expr)
     {
         var val = Evaluate(expr.Value);
-        environment.Assign(expr.Name, val);
+        Environment.Assign(expr.Name, val);
         return null;
     }
 
     public object VisitBlockStmt(Stmt.Block stmt)
     {
-        ExecuteBlock(stmt.Statements, new Environment(this.environment));
+        ExecuteBlock(stmt.Statements, new Environment(this.Environment));
         return null;
     }
 
     public void ExecuteBlock(List<Stmt> statements, Environment environment)
     {
-        Environment previous = this.environment;
+        Environment previous = this.Environment;
         try
         {
-            this.environment = environment;
+            this.Environment = environment;
 
             foreach (Stmt statement in statements)
             {
@@ -209,7 +209,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         }
         finally
         {
-            this.environment = previous;
+            this.Environment = previous;
         }
     }
 
@@ -277,6 +277,13 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         {
             throw new RuntimeError(expr.Paren, $"Expected {function.Arity()} arguments but got {args.Count}.");
         }
-        return function.call(this, args);
+        return function.Call(this, args);
+    }
+
+    public object VisitFunctionStmt(Stmt.Function stmt)
+    {
+        var function = new LoxFunction(stmt);
+        Environment.DefineVariable(stmt.Name.Lexeme, function);
+        return null;
     }
 }

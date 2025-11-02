@@ -2,7 +2,7 @@ using Shnaramn.Lox;
 
 public interface ILoxCallable
 {
-    object call(Interpreter interpreter, List<object> arguments);
+    object Call(Interpreter interpreter, List<object> arguments);
 
     int Arity();
 }

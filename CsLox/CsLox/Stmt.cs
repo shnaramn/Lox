@@ -6,6 +6,7 @@ namespace Shnaramn.Lox
         {
             R VisitBlockStmt(Block stmt);
             R VisitExpressionStmt(Expression stmt);
+            R VisitFunctionStmt(Function stmt);
             R VisitIfStmt(If stmt);
             R VisitPrintStmt(Print stmt);
             R VisitVarStmt(Var stmt);
@@ -38,6 +39,23 @@ namespace Shnaramn.Lox
                 visitor.VisitExpressionStmt(this);
 
             public readonly Expr ExpressionStmt;
+        }
+
+        public class Function : Stmt
+        {
+            public Function(Token Name, List<Token> Params, List<Stmt> Body)
+            {
+                this.Name = Name;
+                this.Params = Params;
+                this.Body = Body;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitFunctionStmt(this);
+
+            public readonly Token Name;
+            public readonly List<Token> Params;
+            public readonly List<Stmt> Body;
         }
 
         public class If : Stmt
