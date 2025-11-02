@@ -286,4 +286,10 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         Environment.DefineVariable(stmt.Name.Lexeme, function);
         return null;
     }
+
+    public object VisitReturnStmt(Stmt.Return stmt)
+    {
+        var value = (stmt.Value == null) ? null : Evaluate(stmt.Value);
+        throw new Return(value);
+    }
 }

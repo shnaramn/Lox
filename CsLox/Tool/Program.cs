@@ -31,6 +31,7 @@ namespace Shnaramn.Lox
                     "Function   : Token Name, List<Token> Params, List<Stmt> Body",
                     "If         : Expr Condition, Stmt ThenBranch, Stmt ElseBranch",
                     "Print      : Expr ExpressionPrint",
+                    "Return     : Token Keyword, Expr Value",
                     "Var        : Token Name, Expr Initializer", // For declaring variables.
                     "While      : Expr Condition, Stmt Body"
                 });

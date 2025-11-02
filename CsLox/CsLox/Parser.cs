@@ -90,6 +90,7 @@ public class Parser
         if (Match(TokenType.FOR)) return ParseForStatement();
         if (Match(TokenType.IF)) return ParseIfStatement();
         if (Match(TokenType.PRINT)) return ParsePrintStatement();
+        if (Match(TokenType.RETURN)) return ParseReturnStatement();
         if (Match(TokenType.BRACE_LEFT)) return new Stmt.Block(ParseBlockStatement());
         if (Match(TokenType.WHILE)) return ParseWhileStatement();
         return ParseExpressionStatement();
@@ -178,6 +179,15 @@ public class Parser
         Expr value = ParseExpression();
         Consume(TokenType.SEMICOLON, "Expect ';' after value.");
         return new Stmt.Print(value);
+    }
+
+    private Stmt ParseReturnStatement()
+    {
+        var token = Previous();
+        Expr? value = Check(TokenType.SEMICOLON) ? null : ParseExpression();
+
+        Consume(TokenType.SEMICOLON, "Expect ';' after return value.");
+        return new Stmt.Return(token, value);
     }
 
     private List<Stmt> ParseBlockStatement()

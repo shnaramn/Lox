@@ -9,6 +9,7 @@ namespace Shnaramn.Lox
             R VisitFunctionStmt(Function stmt);
             R VisitIfStmt(If stmt);
             R VisitPrintStmt(Print stmt);
+            R VisitReturnStmt(Return stmt);
             R VisitVarStmt(Var stmt);
             R VisitWhileStmt(While stmt);
         }
@@ -86,6 +87,21 @@ namespace Shnaramn.Lox
                 visitor.VisitPrintStmt(this);
 
             public readonly Expr ExpressionPrint;
+        }
+
+        public class Return : Stmt
+        {
+            public Return(Token Keyword, Expr Value)
+            {
+                this.Keyword = Keyword;
+                this.Value = Value;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitReturnStmt(this);
+
+            public readonly Token Keyword;
+            public readonly Expr Value;
         }
 
         public class Var : Stmt

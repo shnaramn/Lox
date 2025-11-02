@@ -21,7 +21,14 @@ public class LoxFunction : ILoxCallable
             environment.DefineVariable(_function.Params[i].Lexeme, arguments[i]);
         }
 
-        interpreter.ExecuteBlock(_function.Body, environment);
+        try
+        {
+            interpreter.ExecuteBlock(_function.Body, environment);
+        }
+        catch (Return result)
+        {
+            return result.Value;
+        }
 
         return null;
     }
