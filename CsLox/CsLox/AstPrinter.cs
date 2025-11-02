@@ -47,4 +47,7 @@ public class AstPrinter : Expr.IVisitor<string>
 
         return builder.ToString();
     }
+
+    public string VisitCallExpr(Expr.Call expr) =>
+        Parenthesize("function", expr.Callee);
 }

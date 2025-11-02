@@ -3,7 +3,14 @@ namespace Shnaramn.Lox;
 
 public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 {
-    private Environment environment = new Environment();
+    private readonly Environment globals = new Environment();
+    private Environment environment;
+
+    public Interpreter()
+    {
+        globals.DefineVariable("clock", new Clock());
+        environment = globals;
+    }
 
     public void Interpret(List<Stmt> statements)
     {
@@ -13,7 +20,8 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
             {
                 Execute(statement);
             }
-        } catch (RuntimeError error)
+        }
+        catch (RuntimeError error)
         {
             CsLox.RuntimeError(error);
         }
@@ -245,6 +253,30 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
             Execute(stmt.Body);
         }
 
-        return true;
+        return null;
+    }
+
+    public object VisitCallExpr(Expr.Call expr)
+    {
+        var callee = Evaluate(expr.Callee);
+
+        var args = new List<object>();
+        foreach (var arg in expr.Arguments)
+        {
+            args.Add(Evaluate(arg));
+        }
+
+        if (!(callee is ILoxCallable))
+        {
+            throw new RuntimeError(expr.Paren, "Can only call functions and classes.");
+        }
+
+        ILoxCallable function = (ILoxCallable)callee;
+
+        if (args.Count != function.Arity())
+        {
+            throw new RuntimeError(expr.Paren, $"Expected {function.Arity()} arguments but got {args.Count}.");
+        }
+        return function.call(this, args);
     }
 }

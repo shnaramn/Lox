@@ -294,7 +294,26 @@ public class Parser
             return new Expr.Unary(@operator, right);
         }
 
-        return ParsePrimary();
+        return ParseCall();
+    }
+
+    private Expr ParseCall()
+    {
+        var expr = ParsePrimary();
+
+        while (true)
+        {
+            if (Match(TokenType.PAREN_LEFT))
+            {
+                expr = FinishCall(expr);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return expr;
     }
 
     private Expr ParsePrimary()
@@ -325,6 +344,27 @@ public class Parser
         }
 
         throw Error(Peek(), "Expect expression.");
+    }
+
+    private Expr FinishCall(Expr callee)
+    {
+        var arguments = new List<Expr>();
+
+        if (!Check(TokenType.PAREN_RIGHT))
+        {
+            do
+            {
+                if (arguments.Count >= 255)
+                {
+                    Error(Peek(), "Can't have more than 255 arguments.");
+                }
+                arguments.Add(ParseExpression());
+            } while (Match(TokenType.COMMA));
+        }
+
+        Token paren = Consume(TokenType.PAREN_RIGHT, "Expect ')' after arguments.");
+
+        return new Expr.Call(callee, paren, arguments);
     }
 
     private bool Match(params TokenType[] tokenTypes)
