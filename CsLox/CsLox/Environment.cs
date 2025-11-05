@@ -48,4 +48,25 @@ public class Environment
 
         throw new RuntimeError(name, "Undefined variable '" + name.Lexeme + "'.");
     }
+
+    public object GetAt(int distance, string name)
+    {
+        return Ancestor(distance).values[name];
+    }
+
+    Environment Ancestor(int distance)
+    {
+        Environment environment = this;
+        for (int i = 0; i < distance; i++)
+        {
+            environment = environment.Enclosing;
+        }
+
+        return environment;
+    }
+
+    public void AssignAt(int distance, Token name, object value)
+    {
+        Ancestor(distance).values[name.Lexeme] = value;
+    }
 }

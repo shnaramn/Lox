@@ -3,6 +3,7 @@ namespace Shnaramn.Lox;
 
 public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 {
+    private readonly Dictionary<Expr, int> _locals = new Dictionary<Expr, int>();
     public readonly Environment Globals = new Environment();
     public Environment Environment { get; set; }
 
@@ -35,6 +36,11 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     public object Evaluate(Expr expr)
     {
         return expr.Accept(this);
+    }
+
+    public void Resolve(Expr expr, int depth)
+    {
+        _locals[expr] = depth;
     }
 
     public object VisitBinaryExpr(Expr.Binary expr)
@@ -173,7 +179,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     }
 
     public object VisitVarExpr(Expr.Var expr) =>
-        Environment.Get(expr.Name);
+        LookUpVariable(expr.Name, expr);
 
     public object VisitVarStmt(Stmt.Var stmt)
     {
@@ -185,7 +191,17 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     public object VisitAssignExpr(Expr.Assign expr)
     {
         var val = Evaluate(expr.Value);
-        Environment.Assign(expr.Name, val);
+        var distance = _locals[expr];
+
+        if (distance != null)
+        {
+            Environment.AssignAt(distance, expr.Name, val);
+        }
+        else
+        {
+            Globals.Assign(expr.Name, val);
+        }
+
         return null;
     }
 
@@ -291,5 +307,18 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
         var value = (stmt.Value == null) ? null : Evaluate(stmt.Value);
         throw new Return(value);
+    }
+
+    private object LookUpVariable(Token name, Expr expr)
+    {
+        if (_locals.ContainsKey(expr))
+        {
+            var distance = _locals[expr];
+            return Environment.GetAt(distance, name.Lexeme);
+        }
+        else
+        {
+            return Globals.Get(name);
+        }
     }
 }

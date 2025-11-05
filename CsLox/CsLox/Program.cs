@@ -92,6 +92,12 @@ namespace Shnaramn.Lox
             // Stop if there was a syntax error.
             if (_hadError) return;
 
+            Resolver resolver = new Resolver(_interpreter);
+            resolver.Resolve(statements);
+
+            // Stop if there was a resolution error.
+            if (_hadError) return;
+
             _interpreter.Interpret(statements);
         }
     }
