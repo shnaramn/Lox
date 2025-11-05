@@ -309,6 +309,14 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         throw new Return(value);
     }
 
+    public object VisitClassStmt(Stmt.Class stmt)
+    {
+        Environment.DefineVariable(stmt.Name.Lexeme, null);
+        LoxClass klass = new LoxClass(stmt.Name.Lexeme);
+        Environment.Assign(stmt.Name, klass);
+        return null;
+    }
+
     private object LookUpVariable(Token name, Expr expr)
     {
         if (_locals.ContainsKey(expr))

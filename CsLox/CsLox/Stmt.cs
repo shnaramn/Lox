@@ -5,6 +5,7 @@ namespace Shnaramn.Lox
         public interface IVisitor<R>
         {
             R VisitBlockStmt(Block stmt);
+            R VisitClassStmt(Class stmt);
             R VisitExpressionStmt(Expression stmt);
             R VisitFunctionStmt(Function stmt);
             R VisitIfStmt(If stmt);
@@ -27,6 +28,21 @@ namespace Shnaramn.Lox
                 visitor.VisitBlockStmt(this);
 
             public readonly List<Stmt> Statements;
+        }
+
+        public class Class : Stmt
+        {
+            public Class(Token Name, List<Stmt.Function> methods)
+            {
+                this.Name = Name;
+                this.methods = methods;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitClassStmt(this);
+
+            public readonly Token Name;
+            public readonly List<Stmt.Function> methods;
         }
 
         public class Expression : Stmt

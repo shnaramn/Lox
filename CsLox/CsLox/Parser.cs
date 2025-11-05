@@ -31,6 +31,7 @@ public class Parser
     {
         try
         {
+            if (Match(TokenType.CLASS)) return ParseClassDeclaration();
             if (Match(TokenType.FUN)) return ParseFunction("function");
             if (Match(TokenType.VAR)) return ParseVarDeclaration();
 
@@ -43,7 +44,24 @@ public class Parser
         }
     }
 
-    private Stmt ParseFunction(string kind)
+    private Stmt ParseClassDeclaration()
+    {
+        var name = Consume(TokenType.IDENTIFIER, "Expect class name.");
+        Consume(TokenType.BRACE_LEFT, "Expect '{' before class body.");
+
+        var methods = new List<Stmt.Function>();
+
+        while (!IsAtEnd() && !Check(TokenType.BRACE_RIGHT))
+        {
+            methods.Add(ParseFunction("method"));
+        }
+
+        Consume(TokenType.BRACE_RIGHT, "Expect '}' after class body.");
+
+        return new Stmt.Class(name, methods);
+    }
+
+    private Stmt.Function ParseFunction(string kind)
     {
         var name = Consume(TokenType.IDENTIFIER, $"Expect {kind} name.");
         Consume(TokenType.PAREN_LEFT, $"Expect '(' after {kind} name.");

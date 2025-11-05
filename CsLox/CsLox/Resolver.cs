@@ -227,4 +227,11 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
         if (_scopes.Count == 0) return;
         _scopes.Peek()[name.Lexeme] = true;
     }
+
+    public object VisitClassStmt(Stmt.Class stmt)
+    {
+        Declare(stmt.Name);
+        Define(stmt.Name);
+        return null;
+    }
 }
