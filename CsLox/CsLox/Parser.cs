@@ -250,7 +250,11 @@ public class Parser
                 Token name = ((Expr.Var)expr).Name;
                 return new Expr.Assign(name, value);
             }
-
+            else if (expr is Expr.Get)
+            {
+                var getExpr = expr as Expr.Get;
+                return new Expr.Set(getExpr.Object, getExpr.Name, value);
+            }
             Error(equals, "Invalid assignment target.");
         }
 

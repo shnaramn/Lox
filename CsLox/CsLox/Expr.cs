@@ -11,6 +11,7 @@ namespace Shnaramn.Lox
             R VisitGroupingExpr(Grouping expr);
             R VisitLiteralExpr(Literal expr);
             R VisitLogicalExpr(Logical expr);
+            R VisitSetExpr(Set expr);
             R VisitUnaryExpr(Unary expr);
             R VisitVarExpr(Var expr);
         }
@@ -122,6 +123,23 @@ namespace Shnaramn.Lox
             public readonly Expr Left;
             public readonly Token Operator;
             public readonly Expr Right;
+        }
+
+        public class Set : Expr
+        {
+            public Set(Expr Object, Token Name, Expr Value)
+            {
+                this.Object = Object;
+                this.Name = Name;
+                this.Value = Value;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitSetExpr(this);
+
+            public readonly Expr Object;
+            public readonly Token Name;
+            public readonly Expr Value;
         }
 
         public class Unary : Expr

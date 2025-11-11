@@ -240,4 +240,11 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
         Resolve(expr.Object);
         return null;
     }
+
+    public object VisitSetExpr(Expr.Set expr)
+    {
+        Resolve(expr.Object);
+        Resolve(expr.Value);
+        return null;
+    }
 }
