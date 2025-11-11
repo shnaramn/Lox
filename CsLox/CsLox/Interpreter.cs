@@ -329,4 +329,15 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
             return Globals.Get(name);
         }
     }
+
+    public object VisitGetExpr(Expr.Get expr)
+    {
+        var obj = Evaluate(expr.Object);
+        if (obj is LoxInstance)
+        {
+            (obj as LoxInstance).Get(expr.Name);
+        }
+
+        throw new RuntimeError(expr.Name, "Only instances can have properties.");
+    }
 }

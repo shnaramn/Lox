@@ -7,6 +7,7 @@ namespace Shnaramn.Lox
             R VisitAssignExpr(Assign expr);
             R VisitBinaryExpr(Binary expr);
             R VisitCallExpr(Call expr);
+            R VisitGetExpr(Get expr);
             R VisitGroupingExpr(Grouping expr);
             R VisitLiteralExpr(Literal expr);
             R VisitLogicalExpr(Logical expr);
@@ -63,6 +64,21 @@ namespace Shnaramn.Lox
             public readonly Expr Callee;
             public readonly Token Paren;
             public readonly List<Expr> Arguments;
+        }
+
+        public class Get : Expr
+        {
+            public Get(Expr Object, Token Name)
+            {
+                this.Object = Object;
+                this.Name = Name;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitGetExpr(this);
+
+            public readonly Expr Object;
+            public readonly Token Name;
         }
 
         public class Grouping : Expr

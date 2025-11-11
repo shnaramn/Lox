@@ -234,4 +234,10 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
         Define(stmt.Name);
         return null;
     }
+
+    public object VisitGetExpr(Expr.Get expr)
+    {
+        Resolve(expr.Object);
+        return null;
+    }
 }

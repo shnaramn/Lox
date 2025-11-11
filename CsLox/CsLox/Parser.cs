@@ -1,6 +1,4 @@
 
-using System.Reflection;
-
 namespace Shnaramn.Lox;
 
 public class Parser
@@ -364,6 +362,11 @@ public class Parser
             if (Match(TokenType.PAREN_LEFT))
             {
                 expr = FinishCall(expr);
+            }
+            else if (Match(TokenType.DOT))
+            {
+                var name = Consume(TokenType.IDENTIFIER, "Expect property name after '.'.");
+                expr = new Expr.Get(expr, name);
             }
             else
             {
