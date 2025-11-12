@@ -5,7 +5,8 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
     private enum FunctionType
     {
         None,
-        Function
+        Function,
+        Method
     }
 
     private Stack<Dictionary<string, bool>> _scopes = new Stack<Dictionary<string, bool>>();
@@ -232,6 +233,13 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
         Declare(stmt.Name);
         Define(stmt.Name);
+
+        foreach (var method in stmt.methods)
+        {
+            FunctionType declaration = FunctionType.Method;
+            ResolveFunction(method, declaration);
+        }
+
         return null;
     }
 

@@ -5,7 +5,6 @@ internal class LoxInstance
     private readonly LoxClass _class;
     private readonly Dictionary<string, object> _fields;
 
-
     public LoxInstance(LoxClass loxClass)
     {
         _class = loxClass;
@@ -17,6 +16,12 @@ internal class LoxInstance
         if (_fields.ContainsKey(name.Lexeme))
         {
             return _fields[name.Lexeme];
+        }
+
+        var method = _class.FindMethod(name.Lexeme);
+        if (method != null)
+        {
+            return method;
         }
 
         throw new RuntimeError(name, $"Undefined property '{name.Lexeme}'.");

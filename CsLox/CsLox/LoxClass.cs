@@ -1,11 +1,16 @@
 namespace Shnaramn.Lox;
 
-internal class LoxClass : ILoxCallable {
-  public readonly string Name;
+internal class LoxClass : ILoxCallable
+{
+    public readonly string Name;
 
-  public LoxClass(string name) {
-    this.Name = name;
-  }
+    private Dictionary<string, LoxFunction> _methods;
+
+    public LoxClass(string name, Dictionary<string, LoxFunction> methods)
+    {
+        this.Name = name;
+        this._methods = methods;
+    }
 
     public int Arity() => 0;
 
@@ -14,6 +19,9 @@ internal class LoxClass : ILoxCallable {
         LoxInstance instance = new LoxInstance(this);
         return instance;
     }
+
+    public LoxFunction FindMethod(string name) =>
+        _methods.ContainsKey(name) ? _methods[name] : null;
 
     public override string ToString() => Name;
 }

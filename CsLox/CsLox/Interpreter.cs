@@ -312,7 +312,16 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     public object VisitClassStmt(Stmt.Class stmt)
     {
         Environment.DefineVariable(stmt.Name.Lexeme, null);
-        LoxClass klass = new LoxClass(stmt.Name.Lexeme);
+
+        var methods = new Dictionary<string, LoxFunction>();
+
+        foreach (var method in stmt.methods)
+        {
+            LoxFunction function = new LoxFunction(method, Environment);
+            methods.Add(method.Name.Lexeme, function);
+        }
+
+        LoxClass klass = new LoxClass(stmt.Name.Lexeme, methods);
         Environment.Assign(stmt.Name, klass);
         return null;
     }
@@ -335,7 +344,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         var obj = Evaluate(expr.Object);
         if (obj is LoxInstance)
         {
-            (obj as LoxInstance).Get(expr.Name);
+            return (obj as LoxInstance).Get(expr.Name);
         }
 
         throw new RuntimeError(expr.Name, "Only instances can have properties.");

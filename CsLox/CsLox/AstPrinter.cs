@@ -50,4 +50,14 @@ public class AstPrinter : Expr.IVisitor<string>
 
     public string VisitCallExpr(Expr.Call expr) =>
         Parenthesize("function", expr.Callee);
+
+    public string VisitGetExpr(Expr.Get expr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public string VisitSetExpr(Expr.Set expr)
+    {
+        throw new NotImplementedException();
+    }
 }
