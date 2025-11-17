@@ -298,7 +298,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
     public object VisitFunctionStmt(Stmt.Function stmt)
     {
-        var function = new LoxFunction(stmt, Environment);
+        var function = new LoxFunction(stmt, Environment, false);
         Environment.DefineVariable(stmt.Name.Lexeme, function);
         return null;
     }
@@ -317,7 +317,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
         foreach (var method in stmt.methods)
         {
-            LoxFunction function = new LoxFunction(method, Environment);
+            LoxFunction function = new LoxFunction(method, Environment, method.Name.Lexeme.Equals("this"));
             methods.Add(method.Name.Lexeme, function);
         }
 

@@ -6,6 +6,7 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
         None,
         Function,
+        Initializer,
         Method
     }
 
@@ -135,8 +136,13 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
         if (stmt.Value != null)
         {
+            if (_currentFunction == FunctionType.Initializer)
+            {
+                CsLox.Error(stmt.Keyword, "Can't return a value from an initializer.");
+            }
             Resolve(stmt.Value);
         }
+
         return null;
     }
 
@@ -249,7 +255,7 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
         foreach (var method in stmt.methods)
         {
-            FunctionType declaration = FunctionType.Method;
+            FunctionType declaration = method.Name.Lexeme.Equals("this") ? FunctionType.Initializer : FunctionType.Method;
             ResolveFunction(method, declaration);
         }
 
