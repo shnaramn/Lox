@@ -250,6 +250,16 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
         Declare(stmt.Name);
         Define(stmt.Name);
 
+        if (stmt.Superclass != null)
+        {
+            if (stmt.Name.Lexeme.Equals(stmt.Superclass.Name.Lexeme))
+            {
+                CsLox.Error(stmt.Superclass.Name, "A class can't inherit from itself.");
+            }
+
+            Resolve(stmt.Superclass);
+        }
+
         BeginScope();
         _scopes.Peek().Add("this", true);
 

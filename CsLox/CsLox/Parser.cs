@@ -45,6 +45,15 @@ public class Parser
     private Stmt ParseClassDeclaration()
     {
         var name = Consume(TokenType.IDENTIFIER, "Expect class name.");
+
+        Expr.Var superClass = null;
+
+        if (Match(TokenType.LESSER))
+        {
+            Consume(TokenType.IDENTIFIER, "Expect superclass name.");
+            superClass = new Expr.Var(Previous());
+        }
+
         Consume(TokenType.BRACE_LEFT, "Expect '{' before class body.");
 
         var methods = new List<Stmt.Function>();
@@ -56,7 +65,7 @@ public class Parser
 
         Consume(TokenType.BRACE_RIGHT, "Expect '}' after class body.");
 
-        return new Stmt.Class(name, methods);
+        return new Stmt.Class(name, superClass, methods);
     }
 
     private Stmt.Function ParseFunction(string kind)

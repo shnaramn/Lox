@@ -30,7 +30,7 @@ namespace Shnaramn.Lox
                 new string[]
                 {
                     "Block      : List<Stmt> Statements",
-                    "Class      : Token Name, List<Stmt.Function> methods",
+                    "Class      : Token Name, Expr.Var Superclass, List<Stmt.Function> methods",
                     "Expression : Expr ExpressionStmt",
                     "Function   : Token Name, List<Token> Params, List<Stmt> Body",
                     "If         : Expr Condition, Stmt ThenBranch, Stmt ElseBranch",

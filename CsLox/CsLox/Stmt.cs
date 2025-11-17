@@ -32,9 +32,10 @@ namespace Shnaramn.Lox
 
         public class Class : Stmt
         {
-            public Class(Token Name, List<Stmt.Function> methods)
+            public Class(Token Name, Expr.Var Superclass, List<Stmt.Function> methods)
             {
                 this.Name = Name;
+                this.Superclass = Superclass;
                 this.methods = methods;
             }
 
@@ -42,6 +43,7 @@ namespace Shnaramn.Lox
                 visitor.VisitClassStmt(this);
 
             public readonly Token Name;
+            public readonly Expr.Var Superclass;
             public readonly List<Stmt.Function> methods;
         }
 

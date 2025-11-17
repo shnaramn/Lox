@@ -4,11 +4,13 @@ internal class LoxClass : ILoxCallable
 {
     public readonly string Name;
 
+    private LoxClass _superClass = null;
     private Dictionary<string, LoxFunction> _methods;
 
-    public LoxClass(string name, Dictionary<string, LoxFunction> methods)
+    public LoxClass(string name, LoxClass superClass, Dictionary<string, LoxFunction> methods)
     {
         this.Name = name;
+        this._superClass = superClass;
         this._methods = methods;
     }
 
@@ -31,8 +33,20 @@ internal class LoxClass : ILoxCallable
         return instance;
     }
 
-    public LoxFunction FindMethod(string name) =>
-        _methods.ContainsKey(name) ? _methods[name] : null;
+    public LoxFunction FindMethod(string name)
+    {
+        if (_methods.ContainsKey(name))
+        {
+            return _methods[name];
+        }
+
+        if (_superClass != null)
+        {
+            return _superClass.FindMethod(name);
+        }
+
+        return null;
+    }
 
     public override string ToString() => Name;
 }

@@ -311,6 +311,16 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
     public object VisitClassStmt(Stmt.Class stmt)
     {
+        object superClass = null;
+        if (stmt.Superclass != null)
+        {
+            superClass = Evaluate(stmt.Superclass);
+
+            if (superClass is not LoxClass)
+            {
+                throw new RuntimeError(stmt.Superclass.Name, "Superclass must be a class.");
+            }
+        }
         Environment.DefineVariable(stmt.Name.Lexeme, null);
 
         var methods = new Dictionary<string, LoxFunction>();
@@ -321,7 +331,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
             methods.Add(method.Name.Lexeme, function);
         }
 
-        LoxClass klass = new LoxClass(stmt.Name.Lexeme, methods);
+        LoxClass klass = new LoxClass(stmt.Name.Lexeme, (LoxClass)superClass, methods);
         Environment.Assign(stmt.Name, klass);
         return null;
     }
