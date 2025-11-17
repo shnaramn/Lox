@@ -12,6 +12,7 @@ namespace Shnaramn.Lox
             R VisitLiteralExpr(Literal expr);
             R VisitLogicalExpr(Logical expr);
             R VisitSetExpr(Set expr);
+            R VisitSuperExpr(Super expr);
             R VisitThisExpr(This expr);
             R VisitUnaryExpr(Unary expr);
             R VisitVarExpr(Var expr);
@@ -141,6 +142,21 @@ namespace Shnaramn.Lox
             public readonly Expr Object;
             public readonly Token Name;
             public readonly Expr Value;
+        }
+
+        public class Super : Expr
+        {
+            public Super(Token Keyword, Token Method)
+            {
+                this.Keyword = Keyword;
+                this.Method = Method;
+            }
+
+            override public R Accept<R>(IVisitor<R> visitor) =>
+                visitor.VisitSuperExpr(this);
+
+            public readonly Token Keyword;
+            public readonly Token Method;
         }
 
         public class This : Expr

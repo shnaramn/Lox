@@ -1,4 +1,6 @@
 
+using System.Reflection.Metadata;
+
 namespace Shnaramn.Lox;
 
 public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
@@ -323,6 +325,12 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         }
         Environment.DefineVariable(stmt.Name.Lexeme, null);
 
+        if (stmt.Superclass != null)
+        {
+            Environment = new Environment(Environment);
+            Environment.DefineVariable("super", superClass);
+        }
+
         var methods = new Dictionary<string, LoxFunction>();
 
         foreach (var method in stmt.methods)
@@ -332,6 +340,11 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         }
 
         LoxClass klass = new LoxClass(stmt.Name.Lexeme, (LoxClass)superClass, methods);
+        if (superClass != null)
+        {
+            Environment = Environment.Enclosing;
+        }
+
         Environment.Assign(stmt.Name, klass);
         return null;
     }
@@ -377,5 +390,20 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     public object VisitThisExpr(Expr.This expr)
     {
         return LookUpVariable(expr.Keyword, expr);
+    }
+
+    public object VisitSuperExpr(Expr.Super expr)
+    {
+        int distance = _locals[expr];
+        var superClass = (LoxClass) Environment.GetAt(distance, "super");
+        var @object = (LoxInstance) Environment.GetAt(distance - 1, "this");
+        var method = superClass.FindMethod(expr.Method.Lexeme);
+
+        if (method == null)
+        {
+            throw new RuntimeError(expr.Method, "Undefined property '" + expr.Method.Lexeme + "'.");
+        }
+
+        return method.Bind(@object);
     }
 }

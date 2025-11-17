@@ -13,7 +13,8 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
     private enum ClassType
     {
         None,
-        Class
+        Class,
+        Subclass
     }
 
     private Stack<Dictionary<string, bool>> _scopes = new Stack<Dictionary<string, bool>>();
@@ -252,12 +253,19 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
         if (stmt.Superclass != null)
         {
+            _currentClass = ClassType.Subclass;
             if (stmt.Name.Lexeme.Equals(stmt.Superclass.Name.Lexeme))
             {
                 CsLox.Error(stmt.Superclass.Name, "A class can't inherit from itself.");
             }
 
             Resolve(stmt.Superclass);
+        }
+
+        if (stmt.Superclass != null)
+        {
+            BeginScope();
+            _scopes.Peek().Add("super", true);
         }
 
         BeginScope();
@@ -270,6 +278,11 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
         }
 
         EndScope();
+
+        if (stmt.Superclass != null)
+        {
+            EndScope();
+        }
 
         _currentClass = enclosingClass;
         return null;
@@ -294,6 +307,21 @@ public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
         {
             CsLox.Error(expr.Keyword, "Can't use 'this' outside of a class.");
             return null;
+        }
+
+        ResolveLocal(expr, expr.Keyword);
+        return null;
+    }
+
+    public object VisitSuperExpr(Expr.Super expr)
+    {
+        if (_currentClass == ClassType.None)
+        {
+        CsLox.Error(expr.Keyword, "Can't use 'super' outside of a class.");
+        }
+        else if (_currentClass != ClassType.Subclass)
+        {
+            CsLox.Error(expr.Keyword, "Can't use 'super' in a class with no superclass.");
         }
 
         ResolveLocal(expr, expr.Keyword);
