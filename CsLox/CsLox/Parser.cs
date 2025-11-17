@@ -396,6 +396,11 @@ public class Parser
 #pragma warning restore CS8604 // Possible null reference argument.
         }
 
+        if (Match(TokenType.THIS))
+        {
+            return new Expr.This(Previous());
+        }
+
         if (Match(TokenType.IDENTIFIER))
         {
             return new Expr.Var(Previous());

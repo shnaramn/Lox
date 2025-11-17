@@ -363,4 +363,9 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         (obj as LoxInstance).Set(expr.Name, value);
         return value;
     }
+
+    public object VisitThisExpr(Expr.This expr)
+    {
+        return LookUpVariable(expr.Keyword, expr);
+    }
 }

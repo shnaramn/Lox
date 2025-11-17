@@ -60,4 +60,9 @@ public class AstPrinter : Expr.IVisitor<string>
     {
         throw new NotImplementedException();
     }
+
+    public string VisitThisExpr(Expr.This expr)
+    {
+        throw new NotImplementedException();
+    }
 }
