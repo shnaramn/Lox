@@ -1,0 +1,13 @@
+Commands Used
+--------------
+
+    brew update
+    brew install cmake
+    cmake--version
+
+To Run
+-------
+1. Navigate to /CLox/bin
+2. Run `cmake ../src/`
+3. Run `make`
+4. Run `./CLox`
