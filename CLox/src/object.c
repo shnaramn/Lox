@@ -39,6 +39,13 @@ static uint32_t hashString(const char* key, int length) {
 
 ObjString* takeString(char* chars, int length) {
     uint32_t hash = hashString(chars, length);
+
+    ObjString* interned = tableFindString(&vm.strings, chars, length, hash);
+    if (interned != NULL) {
+        FREE_ARRAY(char, (void*)chars, length + 1);
+        return interned;
+    }
+
     return allocateString(chars, length, hash);
 }
 
@@ -46,10 +53,7 @@ ObjString* copyString(const char* chars, int length) {
     uint32_t hash = hashString(chars, length);
 
     ObjString* interned = tableFindString(&vm.strings, chars, length, hash);
-    if (interned != NULL) {
-        FREE_ARRAY(char, chars, length + 1);
-        return interned;
-    }
+    if (interned != NULL) return interned;
 
     char* heapChars = ALLOCATE(char, length + 1);
     memcpy(heapChars, chars, length);
