@@ -373,7 +373,7 @@ static void markInitialized() {
     current->locals[current->localCount - 1].depth = current->scopeDepth;
 }
 
-static void defineVariable(u_int8_t global) {
+static void defineVariable(uint8_t global) {
     if (current->scopeDepth > 0) {
         markInitialized();
         return;
@@ -429,7 +429,7 @@ static void binary(bool canAssign) {
 }
 
 static void call(bool canAssign) {
-    u_int8_t argCount = argumentList();
+    uint8_t argCount = argumentList();
     emitBytes(OP_CALL, argCount);
 }
 
@@ -489,7 +489,7 @@ static void string(bool canAssign) {
 }
 
 static void namedVariable(Token name, bool canAssign) {
-    u_int8_t getOp, setOp;
+    uint8_t getOp, setOp;
     int arg = resolveLocal(current, &name);
 
     if (arg != -1) {
@@ -755,7 +755,7 @@ static void funDeclaration() {
 }
 
 static void varDeclaration() {
-    u_int8_t global = parseVariable("Expect variable name.");
+    uint8_t global = parseVariable("Expect variable name.");
 
     if (match(TOKEN_EQUAL)) {
         expression();
